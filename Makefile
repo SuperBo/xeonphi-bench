@@ -1,51 +1,50 @@
-CC=icc
-CXX=icpc
-CFLAGS=-mmic -openmp -O3
-CXXFLAGS=-mmic -std=c++11 -O3
+CC = icc
+CXX = icpc
+CFLAGS = -mmic -qopenmp -O3
+CXXFLAGS = -mmic -std=c++11 -ltbb -O3
+INC = -I./
+TASKSIZE = -D SIZE=1000
+ARRSIZE = -D SIZE=1000000
 
-all:
+all: cilk tbb openmp
 
-util.o: util.c
-    $(CC) -c -o build/util.o
+cilk: fib_cilk map_cilk reduce_cilk
 
-fib_cilk: util.o fib_cilk.o
-    $(CXX) -o bin/fib_cilk build/fib_cilk.o build/util.o
+tbb: fib_tbb map_tbb reduce_tbb
 
-fib_cilk.o: Cilk/fib_cilk.cpp
-    $(CXX) $(CXXFLAGS) -c -o build/fib_cilk.o Cilk/fib_cilk.cpp
+openmp: fib_openmp map_openmp reduce_openmp
 
-reduce_cilk: util.o reduce_cilk.o
-    $(CXX) -o bin/reduce_cilk build/reduce_cilk.o build/util.o
+util: util.c
+	$(CC) $(CFLAGS) -c -o build/util.o util.c
+	$(CXX) $(CXXFLAGS) -c -o build/util_cpp.o util.c
 
-reduce_cilk.o: Cilk/map_cilk.cpp
-    $(CXX) $(CXXFLAGS) -o build/reduce_cilk.o Cilk/reduce_cilk.cpp
+fib_cilk: util Cilk/fib_cilk.cpp
+	$(CXX) $(CXXFLAGS) $(INC) $(TASKSIZE) -o bin/fib_cilk Cilk/fib_cilk.cpp build/util_cpp.o
 
-map_cilk: util.o map_cilk.o
-    $(CXX) $(CXXFLAGS) -o bin/map_cilk build/map_cilk.o buid/util.o
+reduce_cilk: util Cilk/reduce_cilk.cpp
+	$(CXX) $(CXXFLAGS) $(INC) $(ARRSIZE) -o bin/reduce_cilk Cilk/reduce_cilk.cpp build/util_cpp.o
 
-map_cilk.o: Cilk/map_cilk.cpp
-    $(CXX) $(CXXFLAGS) -o build/map_cilk.o Cilk/map_cilk.cpp
+map_cilk: util Cilk/map_cilk.cpp
+	$(CXX) $(CXXFLAGS) $(INC) $(ARRSIZE) -o bin/map_cilk Cilk/map_cilk.cpp build/util_cpp.o
 
-fib_openmp: util.o fib_openmp.o
-    $(CC) -o bin/fib_openmp buid/fib_openmp.o buid/util.o
+fib_openmp: util OpenMP/fib_openmp.c
+	$(CC) $(CFLAGS) $(INC) $(TASKSIZE) -o bin/fib_openmp OpenMP/fib_openmp.c build/util.o
 
-fib_openmp.o: OpenMP/fib_openmp.c
-    $(CC) $(CFLAGS) -o build/fib_openmp.o OpenMP/fib_openmp.c
+reduce_openmp: util OpenMP/reduce_openmp.c
+	$(CC) $(CFLAGS) $(INC) $(ARRSIZE) -o bin/reduce_openmp OpenMP/reduce_openmp.c build/util.o
 
-reduce_openmp: util.o fib_openmp.o
-    $(CC) -o bin/reduce_openmp build/reduce_omp.o build/util.o
+map_openmp: util OpenMP/map_openmp.c
+	$(CC) $(CFLAGS) $(INC) $(ARRSIZE) -o bin/map_openmp OpenMP/map_openmp.c build/util.o
 
-reduce_openmp.o: OpenMP/reduce_openmp.c
-    $(CC) $(CFLAGS) -o build/reduce_omp.o OpenMP/reduce_openmp.c
+fib_tbb: util TBB/fib_tbb.cpp
+	$(CXX) $(CXXFLAGS) $(INC) $(TASKSIZE) -o bin/fib_tbb TBB/fib_tbb.cpp build/util_cpp.o
 
-map_openmp: map_openmp.o util.o
-    $(CC) $(CFLAGS) -o bin/map_openmp build/map_omp.o build/util.o
+map_tbb: util TBB/map_tbb.cpp
+	$(CXX) $(CXXFLAGS) $(INC) $(ARRSIZE) -o bin/map_tbb TBB/map_tbb.cpp build/util_cpp.o
 
-map_openmp.o: OpenMP/map_openmp.c
-    $(CC) $(CFLAGS) -o build/map_omp.o OpenMP/map_openmp.c
+reduce_tbb: util TBB/reduce_tbb.cpp
+	$(CXX) $(CXXFLAGS) $(INC) $(ARRSIZE) -o bin/reduce_tbb TBB/reduce_tbb.cpp build/util_cpp.o
 
-fib_tbb: fib_tbb.o
-    $(CC) $(CXXFLAGS) -o build/fib_tbb build/fib_tbb.o build/util.o
-
-fib_tbb.o: TBB/fib_tbb.cpp
-    $(CXX) $(CXXFLAGS) -o build/fib_tbb.o TBB/fib_tbb.cpp
+clean:
+	rm -rf build/*.o
+	rm -rf bin/*

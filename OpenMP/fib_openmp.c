@@ -3,17 +3,20 @@
 
 #include "util.h"
 
-#ifndef N
-#define N 1000
+#ifndef SIZE
+#define SIZE 1000
 #endif
+
+double fib(int N);
 
 int main(int argc, char** argv) {
     double time = gettime();
+    double result;
 
-    #pragma omp parallel
+    #pragma omp parallel shared(result)
     {
         #pragma omp single
-        double result = fib(N);
+        result = fib(SIZE);
     }
 
     time = gettime() - time;
@@ -30,9 +33,9 @@ double fib(int n) {
     double n1, n2;
 
     #pragma omp task shared(n1)
-    double n1 = fib(n-1);
+    n1 = fib(n-1);
     #pragma omp task shared(n2)
-    double n2 = fib(n-2);
+    n2 = fib(n-2);
 
     #pragma omp taskwait
     return n1 + n2;

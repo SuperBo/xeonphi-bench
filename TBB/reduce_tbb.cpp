@@ -7,24 +7,24 @@
 
 using namespace tbb;
 
-#ifndef N
-#define N 100000
+#ifndef SIZE
+#define SIZE 100000
 #endif
 
 int main(int argc, char* argv[]) {
-    double a[N];
+    double a[SIZE];
     double runtime;
     double sum = 0;
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < SIZE; i++) {
         a[i] = (i + 3) % 1000;
     }
 
     runtime = gettime();
     
     sum = parallel_reduce(
-        blocked_range<double*>(a, a + N),
-        0f,
+        blocked_range<double*>(a, a + SIZE),
+        0.f,
         [] (const blocked_range<double*>& range, double value) -> double {
             for (double* b = range.begin(); b != range.end(); b++) {
                 value += *b;

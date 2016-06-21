@@ -7,6 +7,9 @@
 #define N 100000
 #endif
 
+#define ALPHA 0.2
+#define BETA 0.4
+
 using namespace tbb;
 
 int main(int argc, char* argv[]) {
@@ -21,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     double run_time = gettime();
 
-    parallel_for(0, N, [=] (int i) {
+    parallel_for(0, N, [&] (int i) {
         c[i] = ALPHA * a[i] + BETA * b[i];
     });
     

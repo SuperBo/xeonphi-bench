@@ -5,15 +5,15 @@
 
 #include "util.h"
 
-#ifndef N
-#define N 100000
+#ifndef SIZE
+#define SIZE 100000
 #endif
 
 int main(int argc, char** argv) {
-    double a[N];
+    double a[SIZE];
     double run_time;
 
-    cilk_for (int i = 0; i < N; i++) {
+    cilk_for (int i = 0; i < SIZE; i++) {
         a[i] = (i % 1000);
     }
 
@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
     run_time = gettime();
 
     cilk::reducer< cilk::op_add<double> > sum(0);
-    cilk_for (int i = 0; i < N; i++) {
+    cilk_for (int i = 0; i < SIZE; i++) {
         *sum += a[i];
     }
 
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     run_time = gettime() - run_time;
 
     std::cout << "The total sum is: " << sum.get_value();
-    std::cout << "Running time is: " << std:setw(5) << run_time;
+    std::cout << "Running time is: " << run_time;
 
     return 0;
 }

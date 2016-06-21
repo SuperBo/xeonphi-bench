@@ -1,19 +1,20 @@
 #include <iostream>
-
-#include <clik/cilk.h>
+#include <cilk/cilk.h>
 
 #include "util.h"
 
-#ifndef N
-#define N 1000
+#ifndef SIZE
+#define SIZE 1000
 #endif
+
+double fib(int);
 
 int main(int argc, char** argv) {
 
     // Start time
     double run_time = gettime();
 
-    double result = fib(N);
+    double result = fib(SIZE);
 
     // Stop time
     run_time = gettime() - run_time;

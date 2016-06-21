@@ -8,10 +8,10 @@
 int main(int argc, char** argv) {
     double a[N];
 
-    double sum = 0.0;
+    double sum = 0.;
     int i;
 
-    #pragma omp prallel for
+    #pragma omp parallel for
     for (i = 0; i < N; i++) {
         a[i] = i + 2 % 1000;
     }

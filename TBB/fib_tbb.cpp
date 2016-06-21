@@ -2,18 +2,22 @@
 #include <tbb/tbb.h>
 #include <tbb/task_group.h>
 
+#include "util.h"
+
+#ifndef SIZE
+#define SIZE 1000
+#endif
+
 using namespace tbb;
 
-#ifndef N
-#define N 1000
-#endif
+double fib(int n);
 
 int main(int argc, char* argv[]) {
     double result;
 
     double run_time = gettime();
 
-    result = fib(N);
+    result = fib(SIZE);
 
     run_time = gettime() - run_time;
 
