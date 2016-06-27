@@ -12,34 +12,40 @@ using namespace tbb;
 #endif
 
 int main(int argc, char* argv[]) {
-    double a[SIZE];
-    double runtime;
-    double sum = 0;
+    float *a;
+    float sum = 0.f;
+    double run_time;
+
+    a = (float*) _mm_malloc(SIZE * sizeof(float), 64);
 
     for (int i = 0; i < SIZE; i++) {
         a[i] = (i + 3) % 1000;
     }
 
-    runtime = gettime();
+    run_time = gettime();
     
     sum = parallel_reduce(
-        blocked_range<double*>(a, a + SIZE),
+        blocked_range<size_t>(0, SIZE),
         0.f,
-        [] (const blocked_range<double*>& range, double value) -> double {
-            for (double* b = range.begin(); b != range.end(); b++) {
-                value += *b;
+        [&] (const blocked_range<size_t>& range, float value) -> float {
+            for (size_t i = range.begin(); i != range.end(); i++) {
+                value += a[i];
             }
             return value;
         },
-        [] (double x, double y) -> double {
+        [] (float x, float y) -> float {
             return x + y;
         }
     );
 
-    runtime = gettime() - runtime;
+    run_time = gettime() - run_time;
 
+    std::cout << "Problem size: " << SIZE << std::endl;
     std::cout << "Result sum = " << sum << std::endl;
-    std::cout << "Running time: " << time << "s" << std::endl;
+    std::cout << "Running time: " << run_time << "s" << std::endl;
+
+    // Free
+    _mm_free(a);
 
     return 0;
 }

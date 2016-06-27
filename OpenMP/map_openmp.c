@@ -9,16 +9,17 @@
 #endif
 
 int main(int argc, char* argv[]) {
-    double a[SIZE];
-    double b[SIZE];
-    double c[SIZE];
+    float *y, *x;
+    
+    x = (float*) _mm_malloc(SIZE * sizeof(float), 64);
+    y = (float*) _mm_malloc(SIZE * sizeof(float), 64);
 
     int i;
 
     #pragma omp parallel for private(i)
     for (i = 0; i < SIZE; i++) {
-        a[i] = 2 * i % 1000;
-        b[i] = 3 * i % 1000;
+        x[i] = 2 * i % 1000;
+        y[i] = 3 * i % 1000;
     }
 
     // Start time
@@ -26,14 +27,19 @@ int main(int argc, char* argv[]) {
 
     #pragma omp parallel for private(i)
     for (i = 0; i < SIZE; i++) {
-        c[i] = ALPHA * a[i] + BETA * b[i];
+        y[i] = ALPHA * x[i] + y[i];
     }
 
     // Stop time
     run_time = gettime() - run_time;
 
     // Print result
-    printf("Cilk Map Running time: %.4lf s", run_time);
+    printf("Problem size: %d\n", SIZE);
+    printf("OpenMP Map Running time: %.5lf s\n", run_time);
+
+    // Free resources
+    _mm_free(x);
+    _mm_free(y);
     
     return 0;
 }

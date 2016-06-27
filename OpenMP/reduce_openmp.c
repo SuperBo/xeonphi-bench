@@ -1,32 +1,40 @@
 #include <stdio.h>
 #include <omp.h>
 
-#ifndef N
-#define N 100000
+#include "util.h"
+
+#ifndef SIZE
+#define SIZE 100000
 #endif
 
 int main(int argc, char** argv) {
-    double a[N];
+    float* a;
 
-    double sum = 0.;
+    a = (float*) _mm_malloc(sizeof(float) * SIZE, 64);
+
+    float sum = 0.;
     int i;
 
     #pragma omp parallel for
-    for (i = 0; i < N; i++) {
+    for (i = 0; i < SIZE; i++) {
         a[i] = i + 2 % 1000;
     }
 
-    double time = gettime();
+    double run_time = gettime();
 
     #pragma omp parallel for private(i) reduction(+:sum)
-    for (i = 0; i < N; i++) {
+    for (i = 0; i < SIZE; i++) {
         sum += a[i];
     }
 
-    time = gettime() - time;
+    run_time = gettime() - run_time;
 
-    printf("Sum is %lf\n", sum);
-    printf("Running time: %lf\n", time);
+    printf("Prolbem size: %i\n", SIZE);
+    printf("Sum is %f\n", sum);
+    printf("Running time: %.5lf\n", run_time);
+
+    // Free
+    _mm_free(a);
 
     return 0;
 }

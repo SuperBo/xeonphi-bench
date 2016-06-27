@@ -4,14 +4,17 @@
 #include "util.h"
 
 #ifndef SIZE
-#define SIZE 1000
+#define SIZE 20
 #endif
 
 double fib(int N);
 
 int main(int argc, char** argv) {
-    double time = gettime();
     double result;
+
+    printf("Problem size %d\n", SIZE);
+
+    double run_time = gettime();
 
     #pragma omp parallel shared(result)
     {
@@ -19,9 +22,10 @@ int main(int argc, char** argv) {
         result = fib(SIZE);
     }
 
-    time = gettime() - time;
+    run_time = gettime() - run_time;
 
-    printf("Running time: %.4lf\n", time);
+    printf("Fib(%d) = %lf\n", SIZE, result);
+    printf("Running time: %.5lf\n", run_time);
 
     return 0;
 }

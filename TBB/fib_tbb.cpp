@@ -5,7 +5,7 @@
 #include "util.h"
 
 #ifndef SIZE
-#define SIZE 1000
+#define SIZE 100
 #endif
 
 using namespace tbb;
@@ -13,6 +13,7 @@ using namespace tbb;
 double fib(int n);
 
 int main(int argc, char* argv[]) {
+    std::cout << "Problem size " << SIZE << std::endl;
     double result;
 
     double run_time = gettime();
@@ -21,7 +22,7 @@ int main(int argc, char* argv[]) {
 
     run_time = gettime() - run_time;
 
-    std::cout << "Result is: " << result << std::endl;
+    std::cout << "Fib(" << SIZE << ") = " << result << std::endl;
     std::cout << "Running time: " << run_time << std::endl;
 
     return 0;

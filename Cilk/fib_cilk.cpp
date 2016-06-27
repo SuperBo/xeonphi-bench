@@ -4,12 +4,13 @@
 #include "util.h"
 
 #ifndef SIZE
-#define SIZE 1000
+#define SIZE 100
 #endif
 
 double fib(int);
 
 int main(int argc, char** argv) {
+    std::cout << "Problem size " << SIZE << std::endl;
 
     // Start time
     double run_time = gettime();
@@ -19,8 +20,8 @@ int main(int argc, char** argv) {
     // Stop time
     run_time = gettime() - run_time;
 
-    std::cout << "The output is " << result << std::endl;
-    std::cout << "Running time: " << time << " s" << std::endl;
+    std::cout << "Fib(" << SIZE << ") = " << result << std::endl;
+    std::cout << "Running time: " << run_time << " s" << std::endl;
 
     return 0;
 }
