@@ -18,14 +18,14 @@ int main(int argc, char** argv) {
 
     #pragma omp parallel shared(result)
     {
-        #pragma omp single
+        #pragma omp single nowait
         result = fib(SIZE);
     }
 
     run_time = gettime() - run_time;
 
     printf("Fib(%d) = %lf\n", SIZE, result);
-    printf("Running time: %.5lf\n", run_time);
+    printf("Running time: %.6lf\n", run_time);
 
     return 0;
 }

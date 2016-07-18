@@ -9,12 +9,14 @@
 #define SIZE 100000
 #endif
 
+const int tile = 32768;
+
 int main(int argc, char* argv[]) {
     float *x, *y;
     x = (float*) _mm_malloc(SIZE * sizeof(float), 64); 
     y = (float*) _mm_malloc(SIZE * sizeof(float), 64); 
 
-    for (int i = 0; i < SIZE; i++) {
+    for (size_t i = 0; i < SIZE; i++) {
         x[i] = 2 * i % 1000;
         y[i] = 3 * i % 1000;
     }
@@ -22,9 +24,9 @@ int main(int argc, char* argv[]) {
     // Start time
     double run_time = gettime();
 
-    #pragma simd
-    cilk_for (int i = 0; i < SIZE; i++) {
-        y[i] = ALPHA * x[i] + y[i];
+    cilk_for (size_t i = 0; i < SIZE; i+=tile) {
+        size_t len = (SIZE - i > tile) ? tile : SIZE - i;
+        y[i:len] = ALPHA * x[i:len] + y[i:len];
     }
 
     // Stop time

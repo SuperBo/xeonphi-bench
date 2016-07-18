@@ -22,10 +22,7 @@ int main(int argc, char* argv[]) {
     // Start time
     double run_time = gettime();
 
-    #pragma simd
-    cilk_for (int i = 0; i < SIZE; i++) {
-        y[i] = ALPHA * x[i] + y[i];
-    }
+    y[0:SIZE] = ALPHA * x[0:SIZE] + y[0:SIZE];
 
     // Stop time
     run_time = gettime() - run_time;

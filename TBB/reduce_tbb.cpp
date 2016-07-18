@@ -2,6 +2,7 @@
 
 #include <tbb/tbb.h>
 #include <tbb/parallel_reduce.h>
+#include <tbb/task_scheduler_init.h>
 
 #include "util.h"
 
@@ -21,6 +22,12 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < SIZE; i++) {
         a[i] = (i + 3) % 1000;
     }
+
+    #ifdef NTHREADS
+    task_scheduler_init init(NTHREADS);
+    #else
+    task_scheduler_init init(tbb::task_scheduler_init::automatic);
+    #endif
 
     run_time = gettime();
     
@@ -42,7 +49,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Problem size: " << SIZE << std::endl;
     std::cout << "Result sum = " << sum << std::endl;
-    std::cout << "Running time: " << run_time << "s" << std::endl;
+    std::cout << "Running time: " << run_time * 1e3 << "ms" << std::endl;
 
     // Free
     _mm_free(a);

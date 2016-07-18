@@ -9,6 +9,8 @@
 #define SIZE 100000
 #endif
 
+const int tile = 32768;
+
 int main(int argc, char** argv) {
     float *a;
     float result;
@@ -21,17 +23,18 @@ int main(int argc, char** argv) {
     }
 
     cilk::reducer< cilk::op_add<float> > sum(0.f);
+    const size_t tile = SIZE / 2;
 
     // Start time
     run_time = gettime();
 
-    __assume_aligned(a, 64);
-    cilk_for (size_t i = 0; i < SIZE; i++) {
-        *sum += a[i];
+    cilk_for (size_t i = 0; i < SIZE; i+=tile) {
+        size_t len = (i+tile < SIZE) ? tile : SIZE - i;
+        *sum += __sec_reduce_add(a[i:len]);
     }
     
     result = sum.get_value();
-
+    
     // Stop time
     run_time = gettime() - run_time;
 

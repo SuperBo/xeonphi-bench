@@ -2,7 +2,6 @@
 #include "util.h"
 
 #define ALPHA 0.2
-#define BETA 0.4
 
 #ifndef SIZE
 #define SIZE 100000
@@ -16,7 +15,6 @@ int main(int argc, char* argv[]) {
 
     int i;
 
-    #pragma omp parallel for private(i)
     for (i = 0; i < SIZE; i++) {
         x[i] = 2 * i % 1000;
         y[i] = 3 * i % 1000;
@@ -25,7 +23,10 @@ int main(int argc, char* argv[]) {
     // Start time
     double run_time = gettime();
 
-    #pragma omp parallel for private(i)
+    __assume_aligned(x, 64);
+    __assume_aligned(y, 64);
+    #pragma ivdep
+    #pragma omp parallel for simd private(i)
     for (i = 0; i < SIZE; i++) {
         y[i] = ALPHA * x[i] + y[i];
     }
@@ -35,7 +36,7 @@ int main(int argc, char* argv[]) {
 
     // Print result
     printf("Problem size: %d\n", SIZE);
-    printf("OpenMP Map Running time: %.5lf s\n", run_time);
+    printf("OpenMP Map Running time: %.3lfms\n", run_time * 1e3);
 
     // Free resources
     _mm_free(x);

@@ -9,6 +9,8 @@
 #define SIZE 100000
 #endif
 
+#define TILE 16384
+
 int main(int argc, char** argv) {
     float *a;
     float result;
@@ -20,18 +22,14 @@ int main(int argc, char** argv) {
         a[i] = (i % 1000);
     }
 
-    cilk::reducer< cilk::op_add<float> > sum(0.f);
+    //cilk::reducer< cilk::op_add<float> > sum(0.f);
 
     // Start time
     run_time = gettime();
 
     __assume_aligned(a, 64);
-    cilk_for (size_t i = 0; i < SIZE; i++) {
-        *sum += a[i];
-    }
+    result = __sec_reduce_add(a[0:SIZE]);
     
-    result = sum.get_value();
-
     // Stop time
     run_time = gettime() - run_time;
 

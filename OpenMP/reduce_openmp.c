@@ -15,14 +15,15 @@ int main(int argc, char** argv) {
     float sum = 0.;
     int i;
 
-    #pragma omp parallel for
     for (i = 0; i < SIZE; i++) {
         a[i] = i + 2 % 1000;
     }
 
     double run_time = gettime();
 
-    #pragma omp parallel for private(i) reduction(+:sum)
+    __assume_aligned(a, 64);
+    #pragma ivdep
+    #pragma omp parallel for simd private(i) reduction(+:sum)
     for (i = 0; i < SIZE; i++) {
         sum += a[i];
     }
@@ -31,7 +32,7 @@ int main(int argc, char** argv) {
 
     printf("Prolbem size: %i\n", SIZE);
     printf("Sum is %f\n", sum);
-    printf("Running time: %.5lf\n", run_time);
+    printf("Running time: %.3lfms\n", run_time * 1e3);
 
     // Free
     _mm_free(a);

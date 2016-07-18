@@ -1,6 +1,7 @@
 #include <iostream>
 #include <tbb/tbb.h>
 #include <tbb/task_group.h>
+#include <tbb/task_scheduler_init.h>
 
 #include "util.h"
 
@@ -15,6 +16,12 @@ double fib(int n);
 int main(int argc, char* argv[]) {
     std::cout << "Problem size " << SIZE << std::endl;
     double result;
+
+    #ifdef NTHREADS
+    task_scheduler_init init(NTHREADS);
+    #else 
+    task_scheduler_init init(task_scheduler_init::automatic);
+    #endif
 
     double run_time = gettime();
 
