@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 
     #pragma omp parallel shared(result)
     {
-        #pragma omp single nowait
+        #pragma omp master
         result = fib(SIZE);
     }
 

@@ -1,6 +1,7 @@
 CC = icc
 CXX = icpc
 CFLAGS = -mmic -O2
+CFLAGS_OFFLOAD = -O2
 CXXFLAGS = -mmic -O2
 INC = -I./
 WITH_OMP = -qopenmp
@@ -97,6 +98,9 @@ reduce_tbb: util TBB/reduce_tbb.cpp
 	# $(CXX) $(CXXFLAGS) $(WITH_TBB) $(INC) $(ARR_SIZE_) -DNTHREADS=61 -o bin/reduce_tbb_61 TBB/reduce_tbb.cpp build/util_cpp.o
 	# $(CXX) $(CXXFLAGS) $(WITH_TBB) $(INC) $(ARR_SIZE_) -DNTHREADS=122 -o bin/reduce_tbb_122 TBB/reduce_tbb.cpp build/util_cpp.o
 	# $(CXX) $(CXXFLAGS) $(WITH_TBB) $(INC) $(ARR_SIZE_) -DNTHREADS=244 -o bin/reduce_tbb_244 TBB/reduce_tbb.cpp build/util_cpp.o
+
+fib_offload_openmp: Offload/fib_offload_openmp.c
+	$(CC) $(CFLAGS_OFFLOAD) $(WITH_OMP) $(INC) $(TASK_SIZE_L) -o bin/fib_offload_openmp Offload/fib_offload_openmp.c util.c
 
 clean:
 	rm -rf build/*.o
