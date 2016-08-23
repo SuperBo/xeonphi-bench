@@ -100,7 +100,10 @@ reduce_tbb: util TBB/reduce_tbb.cpp
 	# $(CXX) $(CXXFLAGS) $(WITH_TBB) $(INC) $(ARR_SIZE_) -DNTHREADS=244 -o bin/reduce_tbb_244 TBB/reduce_tbb.cpp build/util_cpp.o
 
 fib_offload_openmp: Offload/fib_offload_openmp.c
-	$(CC) $(CFLAGS_OFFLOAD) $(WITH_OMP) $(INC) $(TASK_SIZE_L) -o bin/fib_offload_openmp Offload/fib_offload_openmp.c util.c
+	$(CC) $(WITH_OMP) $(INC) $(TASK_SIZE_L) -o bin/fib_offload_openmp util.c Offload/fib_offload_openmp.c
+
+fib_offload_conflict: Offload/fib_offload_conflict.c
+	$(CC) $(WITH_OMP) $(INC) $(TASK_SIZE_L) -o bin/fib_offload_conflict util.c Offload/fib_offload_conflict.c
 
 clean:
 	rm -rf build/*.o
