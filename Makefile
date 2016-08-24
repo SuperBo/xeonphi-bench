@@ -105,6 +105,9 @@ fib_offload_openmp: Offload/fib_offload_openmp.c
 fib_offload_conflict: Offload/fib_offload_conflict.c
 	$(CC) $(WITH_OMP) $(INC) $(TASK_SIZE_L) -o bin/fib_offload_conflict util.c Offload/fib_offload_conflict.c
 
+fib_offload_conflict2: Offload/fib_offload_conflict2.c
+	$(CC) $(WITH_OMP) $(INC) $(TASK_SIZE_L) -o bin/fib_offload_conflict2 util.c Offload/fib_offload_conflict2.c
+
 clean:
 	rm -rf build/*.o
 	rm -rf bin/*
